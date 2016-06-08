@@ -1,5 +1,6 @@
 import numpy as np
 import re
+import astropy.units as u
 
 class MagphysOutput(object):
     """
@@ -26,11 +27,11 @@ class MagphysOutput(object):
         #first go through fitinfo
         filternames = fitinfo[1].strip("#")
         filternames = filternames.split()
-        flux = np.array(fitinfo[2].split(), dtype=float)
-        fluxerr = np.array(fitinfo[3].split(), dtype=float)
-        predicted = np.array(fitinfo[12].split(), dtype=float)
+        flux = np.array(fitinfo[2].split(), dtype=float) * u.Jy
+        fluxerr = np.array(fitinfo[3].split(), dtype=float) * u.Jy
+        predicted = np.array(fitinfo[12].split(), dtype=float) * u.Jy
         self.obs_filters = filternames
-        self.obs_flux = flux
+        self.obs_flux = flux 
         self.obs_flux_err = fluxerr
         self.obs_predict = predicted
         
@@ -85,6 +86,8 @@ class MagphysOutput(object):
         model_sed = sedinfo[10:]
         model_sed = [i.split() for i in model_sed]
         self.sed_model = np.array(model_sed,dtype=float)
+        self.sed_model_logwaves = self.sed_model[:,0] * u.dex(u.AA)
+        self.sed_model_logluminosity_lambda = self.sed_model[:,1] * u.dex(u.Lsun / u.AA)
         
         
     @staticmethod
